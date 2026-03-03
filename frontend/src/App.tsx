@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './login';
+import Login from './Login';
 import MainDashboard from './MainDashboard';
 
 // Komponen Satpam (Protected Route)
