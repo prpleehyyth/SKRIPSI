@@ -1,0 +1,251 @@
+@import "tailwindcss";
+
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+
+  .btn-ghost {
+    background: white;
+    color: #64748b;
+    border-color: #e2e8f0;
+  }
+
+  .btn-ghost:hover {
+    background: #f8fafc;
+    color: #334155;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+  }
+
+  .nav-link:hover {
+    background: #f1f5f9;
+    color: #334155;
+  }
+
+  .nav-link.active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  .badge-online {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+  }
+
+  .badge-offline {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+
+  .input-search {
+    padding: 7px 12px 7px 34px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #0f172a;
+    font-size: 13px;
+    font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 220px;
+  }
+
+  .input-search:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .input-search::placeholder {
+    color: #94a3b8;
+  }
+
+  .tbl-row {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.1s;
+  }
+
+  .tbl-row:hover {
+    background: #f8fafc;
+  }
+
+  .tbl-row:last-child {
+    border-bottom: none;
+  }
+
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    transition: all 0.15s;
+  }
+
+  .filter-pill:hover {
+    border-color: #cbd5e1;
+    color: #334155;
+  }
+
+  .filter-pill.active {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  .filter-pill .pill-count {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 99px;
+    background: #f1f5f9;
+    color: #94a3b8;
+  }
+
+  .filter-pill.active .pill-count {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseDot {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.anim-fade-up {
+  animation: fadeUp 0.3s ease both;
+}
+
+.s1 {
+  animation-delay: 0.04s;
+}
+
+.s2 {
+  animation-delay: 0.08s;
+}
+
+.s3 {
+  animation-delay: 0.12s;
+}
+
+.s4 {
+  animation-delay: 0.16s;
+}
+
+.s5 {
+  animation-delay: 0.20s;
+}
+
+.dot-pulse {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+.spin {
+  animation: spin 0.75s linear infinite;
+}

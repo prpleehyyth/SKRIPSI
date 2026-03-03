@@ -1,0 +1,57 @@
+services:
+
+  app:
+    build:
+      context: ./docker/php
+    container_name: ftth_app
+    volumes:
+      - ./backend:/var/www
+    working_dir: /var/www
+    depends_on:
+      - db
+    networks:
+      - ftth_net
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: ftth_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - ftth_net
+
+  db:
+    image: postgres:15
+    container_name: ftth_db
+    restart: always
+    environment:
+      POSTGRES_DB: ftth_monitoring
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - ftth_net
+
+  frontend:
+    image: node:20-alpine
+    container_name: ftth_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    expose:
+      - "5173"
+    networks:
+      - ftth_net
+
+volumes:
+  dbdata:
+
+networks:
+  ftth_net:
