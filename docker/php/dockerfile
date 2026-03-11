@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql
+    libsnmp-dev \
+    snmp \
+    && docker-php-ext-install pdo pdo_pgsql snmp
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
