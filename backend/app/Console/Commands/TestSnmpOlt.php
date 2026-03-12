@@ -31,15 +31,6 @@ class TestSnmpOlt extends Command
         $macResults = @snmp2_real_walk($ip, $community, $macOid, 5000000, 3);
         $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid, 5000000, 3);
 
-        // --- TAMBAHKAN INI SEMENTARA ---
-        $this->info("=== CONTOH RAW RX RESULTS ===");
-        if ($rxResults) {
-            print_r(array_slice($rxResults, 0, 3, true));
-        } else {
-            $this->info("Waduh, array Rx Power kosong!");
-        }
-        $this->info("=============================");
-        // -------------------------------
 
         if (!$macResults || !$rxResults) {
             $this->error("Gagal menarik data SNMP! Pastikan IP/Community benar dan OLT bisa di-ping dari dalam Docker.");
@@ -58,7 +49,8 @@ class TestSnmpOlt extends Command
             $macClean = trim(str_replace(['STRING:', '"', ' '], '', $macValue));
 
             // Cocokkan index OID MAC dengan index OID Rx Power
-            $rxOidKey = $rxPowerOid . "." . $index;
+            // Kunci jawaban: Sesuaikan awalan dengan 'iso.' murni dari balasan server
+            $rxOidKey = "iso.3.6.1.4.1.25355.3.2.6.14.2.1.8.1.1." . $index;
             $rxPowerClean = "na";
 
             // Cek apakah data Rx Power untuk index ini tersedia
@@ -66,12 +58,7 @@ class TestSnmpOlt extends Command
                 // Bersihkan juga nilai redamannya dari teks bawaan SNMP (seperti INTEGER: atau STRING:)
                 $rxPowerClean = trim(str_replace(['STRING:', 'INTEGER:', '"', ' '], '', $rxResults[$rxOidKey]));
             }
-            // --- KODE CCTV MULAI ---
-            $this->info("MAC dari OLT: '{$macClean}' | Rx Power: '{$rxPowerClean}'");
-            $cekDb = Onu::where('mac_address', $macClean)->first();
-            $this->info("Status di DB: " . ($cekDb ? "KETEMU" : "TIDAK DITEMUKAN"));
-            $this->info("-------------------------------------------------");
-            // --- KODE CCTV SELESAI ---
+            
             // Hanya proses ONU yang sedang online (redaman tidak "na")
             if(strtolower($rxPowerClean) !== "na" && is_numeric($rxPowerClean)) {
                 
