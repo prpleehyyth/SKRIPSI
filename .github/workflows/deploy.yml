@@ -1,0 +1,34 @@
+name: Deploy Skripsi to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Eksekusi SSH dan Deploy Monorepo ke AWS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd ~/SKRIPSI
+            
+            # Tarik kode terbaru dari GitHub
+            git pull origin main
+            
+            # Eksekusi dependensi Laravel di dalam container backend
+            sudo docker exec -T ftth_app composer install --no-interaction --prefer-dist --optimize-autoloader
+            
+            # Jalankan migration otomatis jika ada perubahan struktur tabel
+            sudo docker exec -T ftth_app php artisan migrate --force
+            
+            # Restart backend container (Laravel)
+            sudo docker-compose restart app
+            
+            # Restart frontend container (TypeScript) biar ngebaca perubahan UI
+            sudo docker-compose restart frontend
