@@ -9,10 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+   public function up(): void
     {
         Schema::create('onu_signal_logs', function (Blueprint $table) {
             $table->id();
+            // Ini kolom yang dicari sama PostgreSQL:
+            $table->foreignId('onu_id')->constrained('onus')->cascadeOnDelete();
+            
+            $table->float('rx_power');
+            $table->string('status');
             $table->timestamps();
         });
     }
