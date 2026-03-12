@@ -24,9 +24,21 @@ class TestSnmpOlt extends Command
         $macOid = ".1.3.6.1.4.1.25355.3.2.6.3.2.1.11.1.1";
         $rxPowerOid = ".1.3.6.1.4.1.25355.3.2.6.14.2.1.8.1.1";
 
-        // Tambahkan angka 5000000 (5 detik) dan 3 (retries)
         $macResults = @snmp2_real_walk($ip, $community, $macOid, 5000000, 3);
         $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid, 5000000, 3);
+
+        // --- TAMBAHKAN KODE DEBUG INI SEMENTARA ---
+        $this->info("=== HASIL MENTAH DARI OLT ===");
+        if ($macResults) {
+            // Tampilkan 3 data pertama aja biar terminal nggak penuh
+            foreach (array_slice($macResults, 0, 3) as $oid => $val) {
+                $this->info("Value MAC: " . $val);
+            }
+        } else {
+            $this->info("Waduh, data MAC kosong dari OLT!");
+        }
+        $this->info("=============================");
+        // ------------------------------------------
 
         if (!$macResults || !$rxResults) {
             $this->error("Gagal menarik data SNMP! Pastikan IP/Community benar dan OLT bisa di-ping dari dalam Docker.");
