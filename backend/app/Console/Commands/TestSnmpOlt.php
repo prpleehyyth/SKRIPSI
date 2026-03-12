@@ -31,6 +31,16 @@ class TestSnmpOlt extends Command
         $macResults = @snmp2_real_walk($ip, $community, $macOid, 5000000, 3);
         $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid, 5000000, 3);
 
+        // --- TAMBAHKAN INI SEMENTARA ---
+        $this->info("=== CONTOH RAW RX RESULTS ===");
+        if ($rxResults) {
+            print_r(array_slice($rxResults, 0, 3, true));
+        } else {
+            $this->info("Waduh, array Rx Power kosong!");
+        }
+        $this->info("=============================");
+        // -------------------------------
+
         if (!$macResults || !$rxResults) {
             $this->error("Gagal menarik data SNMP! Pastikan IP/Community benar dan OLT bisa di-ping dari dalam Docker.");
             return;
