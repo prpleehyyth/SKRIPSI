@@ -24,9 +24,9 @@ class TestSnmpOlt extends Command
         $macOid = ".1.3.6.1.4.1.25355.3.2.6.3.2.1.11.1.1";
         $rxPowerOid = ".1.3.6.1.4.1.25355.3.2.6.14.2.1.8.1.1";
 
-        // Menggunakan @ untuk menekan error PHP bawaan jika SNMP timeout
-        $macResults = @snmp2_real_walk($ip, $community, $macOid);
-        $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid);
+        // Tambahkan angka 5000000 (5 detik) dan 3 (retries)
+        $macResults = @snmp2_real_walk($ip, $community, $macOid, 5000000, 3);
+        $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid, 5000000, 3);
 
         if (!$macResults || !$rxResults) {
             $this->error("Gagal menarik data SNMP! Pastikan IP/Community benar dan OLT bisa di-ping dari dalam Docker.");
