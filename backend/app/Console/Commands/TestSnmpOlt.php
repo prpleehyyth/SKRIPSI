@@ -20,25 +20,16 @@ class TestSnmpOlt extends Command
 
         $this->info("Memulai proses tarik data SNMP dari OLT {$ip}...");
 
+        // KODE SAKTI: Paksa PHP membalas OID dalam format angka murni (bukan teks MIB)
+        snmp_set_oid_numeric_print(true);
+
         // OID berdasarkan hasil scan HA7304
         $macOid = ".1.3.6.1.4.1.25355.3.2.6.3.2.1.11.1.1";
         $rxPowerOid = ".1.3.6.1.4.1.25355.3.2.6.14.2.1.8.1.1";
 
+        // Tarik data dengan timeout 5 detik dan maksimal 3x retries
         $macResults = @snmp2_real_walk($ip, $community, $macOid, 5000000, 3);
         $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid, 5000000, 3);
-
-        // --- TAMBAHKAN KODE DEBUG INI SEMENTARA ---
-        $this->info("=== HASIL MENTAH DARI OLT ===");
-        if ($macResults) {
-            // Tampilkan 3 data pertama aja biar terminal nggak penuh
-            foreach (array_slice($macResults, 0, 3) as $oid => $val) {
-                $this->info("Value MAC: " . $val);
-            }
-        } else {
-            $this->info("Waduh, data MAC kosong dari OLT!");
-        }
-        $this->info("=============================");
-        // ------------------------------------------
 
         if (!$macResults || !$rxResults) {
             $this->error("Gagal menarik data SNMP! Pastikan IP/Community benar dan OLT bisa di-ping dari dalam Docker.");
@@ -49,21 +40,28 @@ class TestSnmpOlt extends Command
         $now = Carbon::now();
 
         foreach ($macResults as $oid => $macValue) {
+            // Ambil index terakhir dari OID
             $oidParts = explode('.', $oid);
             $index = end($oidParts);
 
-            // Bersihkan format string bawaan SNMP
-            $macClean = str_replace(['STRING:', '"', ' '], '', $macValue);
+            // Bersihkan format string bawaan SNMP dari MAC Address
+            $macClean = trim(str_replace(['STRING:', '"', ' '], '', $macValue));
 
+            // Cocokkan index OID MAC dengan index OID Rx Power
             $rxOidKey = $rxPowerOid . "." . $index;
             $rxPowerClean = "na";
 
+            // Cek apakah data Rx Power untuk index ini tersedia
             if (isset($rxResults[$rxOidKey])) {
-                $rxPowerClean = str_replace(['STRING:', '"', ' '], '', $rxResults[$rxOidKey]);
+                // Bersihkan juga nilai redamannya dari teks bawaan SNMP (seperti INTEGER: atau STRING:)
+                $rxPowerClean = trim(str_replace(['STRING:', 'INTEGER:', '"', ' '], '', $rxResults[$rxOidKey]));
             }
 
             // Hanya proses ONU yang sedang online (redaman tidak "na")
-            if(strtolower($rxPowerClean) !== "na") {
+            if(strtolower($rxPowerClean) !== "na" && is_numeric($rxPowerClean)) {
+                
+                // Terkadang nilai Rx Power dari OLT HA7304 harus dibagi 10, pastikan sesuai dengan OLT kamu
+                // Jika OLT ngirim "-250" padahal aslinya "-25.0", ganti baris bawah jadi: $powerFloat = (float) $rxPowerClean / 10;
                 $powerFloat = (float) $rxPowerClean;
                 $status = $this->checkStatus($powerFloat);
 
@@ -76,7 +74,8 @@ class TestSnmpOlt extends Command
                         'onu_id' => $onu->id,
                         'rx_power' => $powerFloat,
                         'status' => $status,
-                        'created_at' => $now
+                        'created_at' => $now,
+                        'updated_at' => $now
                     ]);
 
                     // (Opsional) Update snmp_index di tabel pelanggan jika ada pergeseran port di OLT
