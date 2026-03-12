@@ -56,7 +56,12 @@ class TestSnmpOlt extends Command
                 // Bersihkan juga nilai redamannya dari teks bawaan SNMP (seperti INTEGER: atau STRING:)
                 $rxPowerClean = trim(str_replace(['STRING:', 'INTEGER:', '"', ' '], '', $rxResults[$rxOidKey]));
             }
-
+            // --- KODE CCTV MULAI ---
+            $this->info("MAC dari OLT: '{$macClean}' | Rx Power: '{$rxPowerClean}'");
+            $cekDb = Onu::where('mac_address', $macClean)->first();
+            $this->info("Status di DB: " . ($cekDb ? "KETEMU" : "TIDAK DITEMUKAN"));
+            $this->info("-------------------------------------------------");
+            // --- KODE CCTV SELESAI ---
             // Hanya proses ONU yang sedang online (redaman tidak "na")
             if(strtolower($rxPowerClean) !== "na" && is_numeric($rxPowerClean)) {
                 
