@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\OnuController;
 // ─── RUTE PUBLIK (Tidak perlu Token) ────────────────────────────────────
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/onus', [OnuController::class, 'index']);
+
 
 // ─── RUTE TERPROTEKSI (Wajib bawa Token JWT Sanctum) ────────────────────
 Route::middleware('auth:sanctum')->group(function () {
@@ -38,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // TODO: Nanti rute GIS Map untuk redaman OLT bisa ditaruh di sini
     // Route::get('/gis-map', [LibreController::class, 'getGisMap']);
 
-    Route::get('/onus', [OnuController::class, 'index']);
+    
 
     
 
