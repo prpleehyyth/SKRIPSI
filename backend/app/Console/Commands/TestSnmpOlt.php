@@ -20,14 +20,14 @@ class TestSnmpOlt extends Command
 
         $this->info("Memulai proses tarik data SNMP dari OLT {$ip}...");
 
-        // KODE SAKTI: Paksa PHP membalas OID dalam format angka murni (bukan teks MIB)
+        
         snmp_set_oid_numeric_print(true);
 
-        // OID berdasarkan hasil scan HA7304
+        
         $macOid = ".1.3.6.1.4.1.25355.3.2.6.3.2.1.11.1.1";
         $rxPowerOid = ".1.3.6.1.4.1.25355.3.2.6.14.2.1.8.1.1";
 
-        // Tarik data dengan timeout 5 detik dan maksimal 3x retries
+        
         $macResults = @snmp2_real_walk($ip, $community, $macOid, 5000000, 3);
         $rxResults = @snmp2_real_walk($ip, $community, $rxPowerOid, 5000000, 3);
 
@@ -41,15 +41,14 @@ class TestSnmpOlt extends Command
         $now = Carbon::now();
 
         foreach ($macResults as $oid => $macValue) {
-            // Ambil index terakhir dari OID
+            
             $oidParts = explode('.', $oid);
             $index = end($oidParts);
 
-            // Bersihkan format string bawaan SNMP dari MAC Address
+            
             $macClean = trim(str_replace(['STRING:', '"', ' '], '', $macValue));
 
-            // Cocokkan index OID MAC dengan index OID Rx Power
-            // Kunci jawaban: Sesuaikan awalan dengan 'iso.' murni dari balasan server
+            
             $rxOidKey = "iso.3.6.1.4.1.25355.3.2.6.14.2.1.8.1.1." . $index;
             $rxPowerClean = "na";
 

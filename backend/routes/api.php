@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LibreController;
+use App\Http\Controllers\Api\OnuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,5 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // TODO: Nanti rute GIS Map untuk redaman OLT bisa ditaruh di sini
     // Route::get('/gis-map', [LibreController::class, 'getGisMap']);
+
+    Route::get('/onus', [OnuController::class, 'index']);
+
+    
 
 });
